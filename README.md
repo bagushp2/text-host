@@ -1,4 +1,4 @@
-# text▍host
+# text-host
 
 Layanan hosting teks sederhana ala Pastebin — tempel teks/kode, dapat link
 permanen untuk dibagikan. Berjalan di **Vercel** (serverless, gratis) dengan
