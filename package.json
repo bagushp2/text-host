@@ -1,0 +1,13 @@
+{
+  "name": "text-host",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Layanan hosting teks sederhana ala Pastebin di atas Vercel + Upstash Redis.",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.38.0"
+  }
+}
