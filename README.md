@@ -1,4 +1,4 @@
-# text-host
+# text▍host
 
 Layanan hosting teks sederhana ala Pastebin — tempel teks/kode, dapat link
 permanen untuk dibagikan. Berjalan di **Vercel** (serverless, gratis) dengan
@@ -13,6 +13,11 @@ penyimpanan **Upstash Redis** (free tier).
 - Endpoint teks mentah: `/api/raw/:id`
 - Salin, unduh (dengan ekstensi sesuai bahasa), dan duplikat ke editor
 - Hitung jumlah dilihat, batas ukuran 400 KB/paste
+- **Paste saya** (`/mine`): daftar paste yang kamu buat, dengan cari/urut,
+  status hidup–kedaluwarsa, serta ekspor/impor katalog
+- **Edit & hapus paste** (`/edit?id=...`): diverifikasi server lewat *edit token*
+- **Akun opsional** (`/login`): daftar/masuk sederhana, paste tercatat di server
+  sehingga bisa diakses & diedit lintas perangkat; paste anonim bisa diklaim
 - Tanpa framework berat: HTML/CSS statis + Node serverless functions
 
 ## Struktur
@@ -20,15 +25,31 @@ penyimpanan **Upstash Redis** (free tier).
 ```
 text-host/
 ├── api/
-│   ├── paste.js          POST  /api/paste        buat paste
-│   ├── paste/[id].js     GET   /api/paste/:id    ambil paste (JSON)
-│   └── raw/[id].js       GET   /api/raw/:id       teks mentah
-├── lib/store.js          koneksi Redis + helper (ID, TTL, dll)
+│   ├── paste.js          POST   /api/paste       buat paste
+│   ├── status.js         POST   /api/status      cek massal hidup/TTL
+│   ├── mine.js           GET    /api/mine        daftar paste milik akun
+│   ├── claim.js          POST   /api/claim       klaim paste anonim ke akun
+│   ├── auth/register.js  POST   /api/auth/register
+│   ├── auth/login.js     POST   /api/auth/login
+│   ├── auth/logout.js    POST   /api/auth/logout
+│   └── auth/me.js        GET    /api/auth/me
+│   ├── paste/[id].js     GET    /api/paste/:id   ambil paste (JSON)
+│   │                     PUT    /api/paste/:id   edit  (butuh edit token)
+│   │                     DELETE /api/paste/:id   hapus (butuh edit token)
+│       raw/[id].js       GET    /api/raw/:id     teks mentah
+│       paste/[id].js      GET/PUT/DELETE /api/paste/:id
+├── lib/store.js          koneksi Redis + helper (ID, token, TTL)
+├── lib/auth.js           user, sesi, cookie, rate limit, indeks pemilik
 ├── public/
 │   ├── index.html + create.js   halaman editor
 │   ├── view.html   + view.js     halaman viewer
+│   ├── mine.html   + mine.js     halaman "paste saya"
+│   ├── edit.html   + edit.js     halaman edit
+│   ├── login.html  + login.js    halaman masuk/daftar
+│   ├── auth.js                   helper sesi + navigasi
+│   ├── mypastes.js               katalog lokal (localStorage)
 │   └── styles.css
-├── vercel.json           rewrite /:id -> view.html (URL bersih)
+├── vercel.json           cleanUrls + rewrite /:id -> view.html
 └── package.json
 ```
 
@@ -77,6 +98,56 @@ npm install
 cp .env.example .env.local   # isi kredensial Upstash kamu
 vercel dev                    # butuh Vercel CLI, jalan di http://localhost:3000
 ```
+
+## Akun & sesi
+
+Akun bersifat **opsional** — situs tetap bisa dipakai anonim seperti semula.
+
+- **Daftar/masuk** di `/login`. Nama pengguna 3–20 karakter (huruf kecil, angka,
+  garis bawah), kata sandi minimal 8 karakter.
+- **Kata sandi di-hash** dengan `scrypt` + salt acak 16 byte (modul `node:crypto`,
+  tanpa dependency tambahan). Yang tersimpan di Redis hanya `salt:hash`.
+- **Sesi** berupa token acak 32 byte di cookie `th_sess`
+  (`HttpOnly; Secure; SameSite=Lax`, umur 30 hari), datanya di Redis dengan TTL.
+- **Rate limit**: 8 percobaan login gagal per 15 menit per nama pengguna,
+  lalu HTTP 429. Pesan gagal sengaja disamakan agar tidak membocorkan
+  nama pengguna mana yang terdaftar.
+- Saat login, paste baru otomatis dicatat sebagai milik akun dan masuk indeks
+  `owned:<username>` (sorted set) sehingga bisa dibuka dari perangkat lain.
+- **Klaim**: saat pertama masuk, paste anonim di katalog lokal bisa dipindahkan
+  ke akun (diverifikasi lewat edit token masing-masing). Paste milik akun lain
+  tidak bisa direbut.
+
+Kunci Redis yang dipakai: `user:<nama>`, `sess:<token>`, `owned:<nama>`,
+`rl:login:<nama>`, `paste:<id>`, `v:<id>`.
+
+## Model kepemilikan (penting)
+
+Kepemilikan paste ditangani berlapis, dan **keduanya berlaku bersamaan**:
+
+1. **Edit token** — saat paste dibuat, server membuat token acak 32 karakter dan
+   menyimpannya bersama paste. Token ini dikembalikan **sekali saja** ke pembuat
+   dan tidak pernah ikut terkirim saat paste dibaca publik. Setiap `PUT`/`DELETE`
+   wajib menyertakannya (header `x-edit-token`), dibandingkan secara
+   *timing-safe* di server. Jadi orang lain yang tahu link paste tetap tidak bisa
+   mengedit atau menghapusnya.
+2. **Katalog lokal** — daftar di `/mine` disimpan di `localStorage` browser,
+   berisi id + token + metadata. Dipakai saat kamu tidak masuk akun.
+3. **Akun** — kalau sedang masuk sebagai pemilik paste, edit/hapus diizinkan
+   tanpa perlu edit token. Halaman `/mine` menggabungkan daftar dari akun dan
+   katalog lokal; entri yang belum diklaim ditandai "lokal saja".
+
+Konsekuensi yang perlu disadari:
+
+- **Tanpa akun**, daftar "paste saya" **per-browser**. Ganti browser/perangkat atau hapus data
+  situs → daftar (dan token editnya) hilang, sementara paste tetap ada di server.
+- Karena itu tersedia tombol **Ekspor/Impor katalog** di `/mine` untuk
+  memindahkan daftar antar-perangkat (file JSON berisi token — perlakukan seperti
+  password).
+- Halaman edit juga menerima token lewat URL: `/edit?id=ID&token=TOKEN`.
+- Membuka halaman edit **tidak** menambah hitungan view dan **tidak**
+  menghanguskan paste bermode "hapus setelah dibaca".
+- Mengedit paste **tidak mereset** masa berlakunya — sisa TTL tetap berjalan.
 
 ## Catatan
 
