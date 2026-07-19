@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit paste — text▍host</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23161b22'/%3E%3Crect x='9' y='8' width='6' height='16' rx='1' fill='%238b7cff'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="brand" href="/">text<span class="caret"></span>host</a>
+      <nav class="navlinks">
+        <a href="/">+ paste baru</a>
+        <span class="dotsep">/</span>
+        <a href="/mine">paste saya</a>
+        <span class="dotsep">/</span>
+        <span data-auth-nav-slot></span>
+      </nav>
+    </header>
+
+    <main id="main">
+      <div class="center-msg" id="loading">
+        <div style="font-family:var(--mono);color:var(--muted);">memuat…</div>
+      </div>
+
+      <div id="editor" hidden>
+        <div class="panel" style="margin-top:22px;">
+          <div class="panel-head">
+            <span class="dot"></span>
+            <span>edit · <code id="idLbl"></code></span>
+            <span class="spacer"></span>
+            <span id="counter">0 baris · 0 B</span>
+          </div>
+          <textarea id="content" class="editor" spellcheck="false"></textarea>
+        </div>
+
+        <div class="controls">
+          <div class="field grow">
+            <label class="lbl" for="title">Judul</label>
+            <input type="text" id="title" maxlength="120" placeholder="(tanpa judul)" />
+          </div>
+
+          <div class="field">
+            <label class="lbl" for="language">Sintaks</label>
+            <select id="language">
+              <option value="plaintext">Teks biasa</option>
+              <option value="javascript">JavaScript</option>
+              <option value="typescript">TypeScript</option>
+              <option value="python">Python</option>
+              <option value="bash">Bash / Shell</option>
+              <option value="json">JSON</option>
+              <option value="yaml">YAML</option>
+              <option value="html">HTML</option>
+              <option value="css">CSS</option>
+              <option value="sql">SQL</option>
+              <option value="ini">INI / Config</option>
+              <option value="xml">XML / M3U</option>
+              <option value="markdown">Markdown</option>
+              <option value="go">Go</option>
+              <option value="rust">Rust</option>
+              <option value="java">Java</option>
+              <option value="php">PHP</option>
+              <option value="c">C</option>
+              <option value="cpp">C++</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <a class="btn" id="cancelBtn" href="/mine">Batal</a>
+            <button class="btn primary" id="saveBtn" type="button">Simpan perubahan</button>
+          </div>
+        </div>
+
+        <div class="alert" id="alert"></div>
+        <div class="okbox" id="okbox"></div>
+
+        <p class="hintline" id="ttlHint"></p>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/mypastes.js"></script>
+  <script src="/auth.js"></script>
+  <script src="/edit.js"></script>
+</body>
+</html>

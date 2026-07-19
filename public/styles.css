@@ -330,3 +330,144 @@ select { cursor: pointer; }
   .brand .caret { animation: none; }
   .stub.show { animation: none; }
 }
+
+/* =========================================================
+   Navigasi, daftar "paste saya", dan halaman edit
+   ========================================================= */
+.navlinks {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 12px; color: var(--faint);
+}
+.navlinks a { color: var(--accent-ink); }
+.navlinks .current { color: var(--ink); }
+
+/* ---------- Toolbar daftar ---------- */
+.listtools {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.listtools input[type="text"] { flex: 1 1 200px; }
+.listtools + #listArea { min-height: 60px; }
+
+/* ---------- Baris paste ---------- */
+.pasterow {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 14px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.pasterow:last-child { border-bottom: 0; }
+.pasterow:hover { background: rgba(255,255,255,0.015); }
+.pasterow.dead { opacity: 0.55; }
+
+.pr-main { flex: 1 1 260px; min-width: 0; }
+.pr-title {
+  font-weight: 600; font-size: 14.5px; color: var(--ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pr-meta {
+  margin-top: 3px;
+  font-family: var(--mono); font-size: 11.5px; color: var(--faint);
+  display: flex; gap: 7px; flex-wrap: wrap; align-items: center;
+}
+.pr-meta code { color: var(--accent-ink); }
+.pr-badges { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+.pr-badges .chip {
+  font-family: var(--mono); font-size: 10.5px;
+  color: var(--accent-ink); background: var(--accent-soft);
+  border-radius: 5px; padding: 2px 7px;
+}
+.chip.warnchip { color: var(--amber); background: rgba(245,178,61,0.12); }
+.chip.deadchip { color: var(--danger); background: rgba(242,104,92,0.12); }
+
+.pr-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+
+.btn.tiny { padding: 6px 10px; font-size: 11.5px; }
+.btn.danger { color: var(--danger); border-color: rgba(242,104,92,0.35); }
+.btn.danger:hover { border-color: var(--danger); }
+
+/* ---------- Kosong / catatan ---------- */
+.empty {
+  padding: 46px 20px; text-align: center;
+  font-family: var(--mono); font-size: 13px; color: var(--muted);
+}
+
+.notebox {
+  margin-top: 16px; padding: 13px 15px;
+  border: 1px solid var(--line); border-left: 3px solid var(--line);
+  border-radius: var(--radius); background: var(--panel);
+  font-size: 13px; color: var(--muted); line-height: 1.6;
+}
+.notebox strong { color: var(--ink); }
+.notebox em { color: var(--accent-ink); font-style: normal; }
+
+/* ---------- Kotak sukses & hint ---------- */
+.okbox {
+  display: none; margin-top: 16px;
+  font-family: var(--mono); font-size: 12.5px; color: var(--ok);
+  border: 1px solid rgba(70,199,155,0.35);
+  background: rgba(70,199,155,0.08);
+  border-radius: 8px; padding: 10px 12px;
+}
+.okbox.show { display: block; }
+.okbox a { color: var(--ok); }
+
+.hintline {
+  margin-top: 14px;
+  font-family: var(--mono); font-size: 11.5px; color: var(--faint);
+}
+
+.warnline { color: var(--amber) !important; margin-top: 8px; }
+
+@media (max-width: 560px) {
+  .pr-actions { width: 100%; }
+  .pr-actions .btn { flex: 1; text-align: center; }
+}
+
+/* =========================================================
+   Akun: banner, tab, panel login
+   ========================================================= */
+.wrap.narrow { max-width: 520px; }
+
+.pad { padding: 16px 18px 20px; }
+
+.acctbanner {
+  margin-top: 22px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--panel);
+  font-family: var(--mono); font-size: 12.5px; color: var(--muted);
+}
+.acctbanner b { color: var(--accent-ink); }
+.acctbanner .btn, .acctbanner a.btn { margin-left: auto; }
+
+.tabs { display: flex; gap: 6px; }
+.tab {
+  flex: 1;
+  font-family: var(--mono); font-size: 13px;
+  color: var(--muted); background: var(--panel-2);
+  border: 1px solid var(--line); border-radius: 8px;
+  padding: 9px 12px; cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.tab:hover { color: var(--ink); }
+.tab.active {
+  color: #14101f; background: var(--accent);
+  border-color: var(--accent); font-weight: 600;
+}
+
+input[type="password"] {
+  font-family: var(--mono); font-size: 13px;
+  color: var(--ink); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 8px;
+  padding: 9px 11px; outline: none; width: 100%;
+  transition: border-color .15s;
+}
+input[type="password"]:focus { border-color: var(--accent); }
+
+.chip.acctchip { color: var(--ok); background: rgba(70,199,155,0.12); }
+
+.notebox a { color: var(--accent-ink); }

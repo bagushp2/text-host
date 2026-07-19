@@ -15,7 +15,13 @@
   <div class="wrap">
     <header class="topbar">
       <a class="brand" href="/">text<span class="caret"></span>host</a>
-      <a class="tagline" href="/" style="color:var(--accent-ink);">+ paste baru</a>
+      <nav class="navlinks">
+        <a href="/mine">paste saya</a>
+        <span class="dotsep">/</span>
+        <a href="/">+ paste baru</a>
+        <span class="dotsep">/</span>
+        <span data-auth-nav-slot></span>
+      </nav>
     </header>
 
     <main id="main">
@@ -28,6 +34,8 @@
   <div class="toast" id="toast">Tersalin ke clipboard</div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="/mypastes.js"></script>
+  <script src="/auth.js"></script>
   <script src="/view.js"></script>
 </body>
 </html>

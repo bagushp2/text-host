@@ -15,7 +15,13 @@
   <div class="wrap">
     <header class="topbar">
       <a class="brand" href="/">text<span class="caret"></span>host</a>
-      <span class="tagline">tempel · simpan · bagikan</span>
+      <nav class="navlinks">
+        <span class="tagline">tempel · simpan · bagikan</span>
+        <span class="dotsep">/</span>
+        <a href="/mine">paste saya</a>
+        <span class="dotsep">/</span>
+        <span data-auth-nav-slot></span>
+      </nav>
     </header>
 
     <main>
@@ -91,8 +97,13 @@
           <input type="text" id="stubUrl" readonly />
           <button class="btn primary" id="copyBtn" type="button">Salin</button>
           <button class="btn" id="openBtn" type="button">Buka</button>
+          <a class="btn" id="stubEdit" href="#" hidden>Edit</a>
         </div>
         <div class="meta" id="stubMeta"></div>
+        <div class="meta warnline" id="stubWarn" hidden>
+          Penyimpanan lokal browser diblokir, jadi paste ini tidak masuk daftar
+          "paste saya" dan token editnya tidak tersimpan. Salin linknya sekarang.
+        </div>
       </section>
 
       <footer class="foot">
@@ -107,6 +118,8 @@
 
   <div class="toast" id="toast">Tersalin ke clipboard</div>
 
+  <script src="/mypastes.js"></script>
+  <script src="/auth.js"></script>
   <script src="/create.js"></script>
 </body>
 </html>

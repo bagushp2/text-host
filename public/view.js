@@ -57,6 +57,8 @@ async function load() {
 }
 
 function render(data) {
+  // Kalau paste ini ada di katalog browser ini, tampilkan tombol Edit.
+  const ownToken = (window.Mine && Mine.token(data.id)) || '';
   const rawUrl = `/api/raw/${encodeURIComponent(data.id)}`;
   const lines = data.content.split('\n');
   const gutter = lines.map((_, i) => i + 1).join('\n');
@@ -95,7 +97,9 @@ function render(data) {
       <button class="btn" id="rawBtn">Lihat mentah</button>
       <button class="btn" id="dlBtn">Unduh</button>
       <button class="btn" id="cloneBtn">Duplikat ke editor</button>
-      <a class="btn" href="/" style="margin-left:auto;">+ paste baru</a>
+      ${ownToken ? `<a class="btn primary" href="/edit?id=${encodeURIComponent(data.id)}">Edit</a>` : ''}
+      <a class="btn" href="/mine" style="margin-left:auto;">Paste saya</a>
+      <a class="btn" href="/">+ paste baru</a>
     </div>
 
     <footer class="foot">

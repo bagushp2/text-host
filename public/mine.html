@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paste saya — text▍host</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23161b22'/%3E%3Crect x='9' y='8' width='6' height='16' rx='1' fill='%238b7cff'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="brand" href="/">text<span class="caret"></span>host</a>
+      <nav class="navlinks">
+        <a href="/">+ paste baru</a>
+        <span class="dotsep">/</span>
+        <span class="current">paste saya</span>
+        <span class="dotsep">/</span>
+        <span data-auth-nav-slot></span>
+      </nav>
+    </header>
+
+    <main>
+      <div class="acctbanner" id="acctBanner" hidden></div>
+
+      <div class="panel" style="margin-top:14px;">
+        <div class="panel-head">
+          <span class="dot"></span>
+          <span>paste saya</span>
+          <span class="spacer"></span>
+          <span id="countLbl">—</span>
+        </div>
+
+        <div class="listtools">
+          <input type="text" id="search" placeholder="Cari judul atau ID…" />
+          <select id="sort">
+            <option value="new">Terbaru</option>
+            <option value="old">Terlama</option>
+            <option value="title">Judul A–Z</option>
+          </select>
+          <button class="btn" id="refreshBtn" type="button">Segarkan</button>
+        </div>
+
+        <div id="listArea"></div>
+      </div>
+
+      <div class="alert" id="alert"></div>
+
+      <section class="notebox">
+        <strong>Cara kerja daftar ini.</strong> Katalog paste disimpan di
+        browser ini saja (localStorage) — tidak ada akun, dan server tidak
+        menyimpan siapa pemiliknya. Artinya daftar akan kosong jika kamu ganti
+        browser/perangkat, atau membersihkan data situs. Gunakan
+        <em>Ekspor</em> untuk memindahkannya.
+      </section>
+
+      <div class="listtools" style="margin-top:14px;">
+        <button class="btn" id="exportBtn" type="button">Ekspor katalog</button>
+        <button class="btn" id="importBtn" type="button">Impor katalog</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden />
+        <button class="btn danger" id="clearBtn" type="button">Kosongkan katalog</button>
+      </div>
+
+      <footer class="foot">
+        <span>text▍host</span>
+        <span class="dotsep">/</span>
+        <span>katalog lokal, bukan akun</span>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/mypastes.js"></script>
+  <script src="/auth.js"></script>
+  <script src="/mine.js"></script>
+</body>
+</html>

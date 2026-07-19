@@ -95,6 +95,18 @@ async function save() {
     const data = await resp.json();
     if (!resp.ok) throw new Error(data.error || 'Gagal menyimpan.');
 
+    // Simpan ke katalog lokal beserta token editnya.
+    const saved = Mine.add({
+      id: data.id,
+      title: $('title').value,
+      language: $('language').value,
+      expiry: data.expiry,
+      burn: data.burn,
+      editToken: data.editToken,
+      createdAt: Date.now(),
+      size: bytesOf(text),
+    });
+
     const url = `${location.origin}/${data.id}`;
     stubUrl.value = url;
     const bits = [];
@@ -102,6 +114,13 @@ async function save() {
     if (data.burn) bits.push('hapus setelah dibaca');
     bits.push(`raw: ${location.origin}/api/raw/${data.id}`);
     stubMeta.textContent = bits.join('  ·  ');
+    const editLink = $('stubEdit');
+    if (editLink) {
+      editLink.href = `/edit?id=${data.id}`;
+      editLink.hidden = false;
+    }
+    const warnEl = $('stubWarn');
+    if (warnEl) warnEl.hidden = saved;
     stubStatus.textContent = data.burn
       ? 'Paste dibuat — hanya bisa dibuka satu kali'
       : 'Paste dibuat — link siap dibagikan';

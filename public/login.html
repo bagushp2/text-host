@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masuk — text▍host</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23161b22'/%3E%3Crect x='9' y='8' width='6' height='16' rx='1' fill='%238b7cff'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="wrap narrow">
+    <header class="topbar">
+      <a class="brand" href="/">text<span class="caret"></span>host</a>
+      <nav class="navlinks"><a href="/">+ paste baru</a></nav>
+    </header>
+
+    <main>
+      <div id="loggedIn" class="panel" style="margin-top:22px;" hidden>
+        <div class="panel-head"><span class="dot"></span><span>sesi aktif</span></div>
+        <div class="pad">
+          <p>Kamu masuk sebagai <strong id="whoami"></strong>.</p>
+          <div class="listtools" style="padding:0;border:0;margin-top:14px;">
+            <a class="btn primary" href="/mine">Paste saya</a>
+            <button class="btn" id="logoutBtn" type="button">Keluar</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="authBox" class="panel" style="margin-top:22px;" hidden>
+        <div class="panel-head">
+          <span class="dot"></span>
+          <span id="modeLbl">masuk</span>
+        </div>
+
+        <div class="pad">
+          <div class="tabs">
+            <button class="tab active" id="tabLogin" type="button">Masuk</button>
+            <button class="tab" id="tabReg" type="button">Daftar</button>
+          </div>
+
+          <div class="field" style="margin-top:16px;">
+            <label class="lbl" for="username">Nama pengguna</label>
+            <input type="text" id="username" autocomplete="username"
+                   placeholder="huruf kecil, angka, garis bawah" maxlength="20" />
+          </div>
+
+          <div class="field" style="margin-top:12px;">
+            <label class="lbl" for="password">Kata sandi</label>
+            <input type="password" id="password" autocomplete="current-password"
+                   placeholder="minimal 8 karakter" />
+          </div>
+
+          <div class="field" style="margin-top:12px;" id="confirmField" hidden>
+            <label class="lbl" for="password2">Ulangi kata sandi</label>
+            <input type="password" id="password2" autocomplete="new-password" />
+          </div>
+
+          <label class="check" id="claimWrap" style="margin-top:14px;" hidden>
+            <input type="checkbox" id="claimBox" checked />
+            <span>Pindahkan <b id="claimCount">0</b> paste dari browser ini ke akun</span>
+          </label>
+
+          <div class="alert" id="alert"></div>
+          <div class="okbox" id="okbox"></div>
+
+          <button class="btn primary" id="submitBtn" type="button"
+                  style="margin-top:16px;width:100%;">Masuk</button>
+        </div>
+      </div>
+
+      <section class="notebox">
+        <strong>Kenapa perlu akun?</strong> Tanpa akun, daftar paste hanya
+        tersimpan di browser ini. Dengan akun, paste yang kamu buat tercatat di
+        server sehingga bisa diakses dan diedit dari perangkat mana pun.
+        Kata sandi disimpan dalam bentuk hash (scrypt + salt), bukan teks asli.
+      </section>
+
+      <footer class="foot">
+        <span>text▍host</span><span class="dotsep">/</span><span>akun opsional</span>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/mypastes.js"></script>
+  <script src="/auth.js"></script>
+  <script src="/login.js"></script>
+</body>
+</html>
