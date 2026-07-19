@@ -2,15 +2,24 @@
 import {
   redis,
   makeId,
+  makeToken,
   pasteKey,
   MAX_BYTES,
   TTL,
 } from '../lib/store.js';
+import { currentUser, indexPaste } from '../lib/auth.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Metode tidak diizinkan.' });
+  }
+
+  if (!redis) {
+    return res.status(500).json({
+      error:
+        'Redis belum terkonfigurasi. Hubungkan Upstash ke project ini, lalu Redeploy.',
+    });
   }
 
   try {
@@ -62,14 +71,25 @@ export default async function handler(req, res) {
         .json({ error: 'Gagal membuat ID unik. Coba lagi.' });
     }
 
+    // Token rahasia: hanya dikembalikan sekali di respons ini, dan tidak pernah
+    // ikut dikirim saat paste dibaca publik.
+    const editToken = makeToken();
+
+    // Kalau sedang login, paste dicatat sebagai milik akun tersebut.
+    const owner = await currentUser(req);
+    const createdAt = Date.now();
+
     const record = {
       title,
       language,
       burn,
       content,
-      createdAt: Date.now(),
+      owner: owner || null,
+      createdAt,
+      updatedAt: null,
       expiry,
       size: bytes,
+      editToken,
     };
 
     // @upstash/redis otomatis serialize object -> JSON.
@@ -79,7 +99,9 @@ export default async function handler(req, res) {
       await redis.set(pasteKey(id), record);
     }
 
-    return res.status(200).json({ id, expiry, burn });
+    if (owner) await indexPaste(owner, id, createdAt);
+
+    return res.status(200).json({ id, expiry, burn, editToken, owner: owner || null });
   } catch (err) {
     console.error('[api/paste] ', err);
     return res
