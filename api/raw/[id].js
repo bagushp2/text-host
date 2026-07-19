@@ -9,6 +9,9 @@ export default async function handler(req, res) {
   if (!id || Array.isArray(id)) {
     return res.status(400).send('ID tidak valid.');
   }
+  if (!redis) {
+    return res.status(500).send('Redis belum terkonfigurasi di server.');
+  }
 
   try {
     const record = await redis.get(pasteKey(id));
